@@ -27,8 +27,10 @@ runs only the work DHRU currently needs.
 - Places its files outside the public webroot, beside `public_html` or `httpdocs` when possible.
 - Supports root SSH, passwordless sudo, and website-user SSH installations according to the
   permissions available on the server.
-- Detects Python 3, required Python modules, MySQL client tools, package manager, systemd, user
+- Detects Python 3.8+, required Python modules, MySQL client tools, package manager, systemd, user
   systemd, lingering, and crontab automatically.
+- Skips legacy Python 3.6 commands and automatically selects a compatible versioned runtime such as
+  `python3.9`; older dnf/yum systems can install `python39` automatically when authorized.
 - Installs missing runtime dependencies when root or passwordless sudo is available, with support
   for `apt-get`, `dnf`, `yum`, `zypper`, `pacman`, and `apk` package managers.
 - Uses systemd timers when available and a locked user-cron watchdog when necessary.
@@ -68,11 +70,13 @@ runs only the work DHRU currently needs.
 - Redacts cron passwords and Telegram tokens from operational messages and logs.
 - The public installer contains no signing private key, content key, activation generator, or
   plaintext runner source.
+- Works with secure cPanel `/tmp` mounts using `noexec`; no insecure remount is required.
 
 ## Requirements
 
 - A VPS or dedicated Linux server with SSH access.
 - A DHRU Fusion website and readable `configs/config.php`.
+- Python 3.8 or newer, installed automatically when root or passwordless sudo permits it.
 - Root, passwordless sudo, or sufficient website-user permissions for one supported scheduler.
 - Outbound HTTPS access when Telegram notifications are enabled.
 - An activation supplied by the authorized distributor.
@@ -145,7 +149,7 @@ Display the complete customer manual without installing:
 Current installer SHA-256:
 
 ```text
-4a265d1afbf17ba6690a51b6890f7c41183527504089230152de8c3792cd9b97
+0fa349ce1a51c938653a619b60664c879e3b68c0c80292167353fd6d5047e25d
 ```
 
 Verify it with:
@@ -155,6 +159,13 @@ sha256sum install-dhru-fast-easy-cron.run
 ```
 
 Stop if the result does not match the trusted checksum above.
+
+## Compatibility troubleshooting
+
+- Keep `/tmp` mounted with `noexec` when that is the server policy. The installer invokes its
+  extracted launcher safely through `sh`; do not remount `/tmp` with `exec`.
+- If `/usr/bin/python3` is Python 3.6 but `python3.9` is installed, the installer automatically uses
+  `python3.9`. You do not need to replace the operating system's Python alternative.
 
 ## License and support
 
