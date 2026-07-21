@@ -10,6 +10,8 @@ Main features:
 - Distributes price updates across six time buckets to reduce load spikes.
 - Prevents overlapping executions with process locks.
 - Supports common Linux hosting layouts and root or website-user SSH access.
+- Detects old DHRU cron jobs, offers private automatic backup/migration, and generates a rollback
+  command while preserving unrelated cron jobs.
 - Includes Telegram failure notifications and automatic installation checks.
 - Uses server-specific offline activation.
 
@@ -28,15 +30,15 @@ Display the complete customer manual without installing:
 ./install-dhru-fast-easy-cron.run --manual
 ```
 
-The installer guides you through site detection, Telegram configuration, activation, validation,
-and scheduler setup.
+The installer guides you through site detection, optional legacy-cron migration, Telegram
+configuration, activation, validation, and scheduler setup.
 
 ## Download verification
 
 SHA-256:
 
 ```text
-93d9db21030b5dabd970fa43b2a3bc6f585096ecb370379e2d401639e647d2d1
+42df8949d8d8f1ce56bf9327de7a0e6a26b318b7d3f60efa8818c4930ca00518
 ```
 
 An activation supplied by the authorized distributor is required.
