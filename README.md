@@ -12,7 +12,8 @@ Main features:
 - Supports common Linux hosting layouts and root or website-user SSH access.
 - Detects old DHRU cron jobs, offers private automatic backup/migration, and generates a rollback
   command while preserving unrelated cron jobs.
-- Includes Telegram failure notifications and automatic installation checks.
+- Includes optional per-recipient Telegram modes: detailed errors, errors plus recovery/digest,
+  or disabled notifications.
 - Uses server-specific offline activation.
 
 ## Installation
@@ -30,15 +31,15 @@ Display the complete customer manual without installing:
 ./install-dhru-fast-easy-cron.run --manual
 ```
 
-The installer guides you through site detection, optional legacy-cron migration, Telegram
-configuration, activation, validation, and scheduler setup.
+The installer guides you through site detection, optional legacy-cron migration, optional
+Telegram configuration with a mode for each chat ID, activation, validation, and scheduler setup.
 
 ## Download verification
 
 SHA-256:
 
 ```text
-42df8949d8d8f1ce56bf9327de7a0e6a26b318b7d3f60efa8818c4930ca00518
+cd83547116ca7e6ca8fcf030608c6df67dea3f204620f093d3c49995001cc7ef
 ```
 
 An activation supplied by the authorized distributor is required.
