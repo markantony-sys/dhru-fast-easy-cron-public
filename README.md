@@ -15,7 +15,8 @@ Main features:
 - Safely detects interrupted/managed installations, offers a private atomic replacement backup,
   and never overwrites an unknown directory.
 - Includes an optional Telegram bot menu for choosing detailed errors, errors plus recovery/digest,
-  or disabled notifications independently in each chat.
+  or disabled notifications independently in each chat, plus live cron status and confirmed
+  global Disable/Enable controls.
 - Uses server-specific offline activation.
 
 ## Installation
@@ -35,15 +36,16 @@ Display the complete customer manual without installing:
 
 The installer guides you through site detection, optional legacy-cron migration, Telegram chat
 registration, activation, validation, and scheduler setup. Every chat starts in `all` mode and can
-change its own setting later through the bot's `/settings` menu. Telegram commands/buttons become
-active after the installer reports successful scheduler activation.
+change its own notification setting later through the bot's `/settings` menu. The same menu can
+show cron status or safely pause/resume processing for the installed site. Telegram
+commands/buttons become active after the installer reports successful scheduler activation.
 
 ## Download verification
 
 SHA-256:
 
 ```text
-04df08ccbfbffbcbbe72bc835296f64000808c546dddc337769c647be3559eea
+4a265d1afbf17ba6690a51b6890f7c41183527504089230152de8c3792cd9b97
 ```
 
 An activation supplied by the authorized distributor is required.
