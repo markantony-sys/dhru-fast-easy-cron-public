@@ -12,6 +12,8 @@ Main features:
 - Supports common Linux hosting layouts and root or website-user SSH access.
 - Detects old DHRU cron jobs, offers private automatic backup/migration, and generates a rollback
   command while preserving unrelated cron jobs.
+- Safely detects interrupted/managed installations, offers a private atomic replacement backup,
+  and never overwrites an unknown directory.
 - Includes an optional Telegram bot menu for choosing detailed errors, errors plus recovery/digest,
   or disabled notifications independently in each chat.
 - Uses server-specific offline activation.
@@ -33,14 +35,15 @@ Display the complete customer manual without installing:
 
 The installer guides you through site detection, optional legacy-cron migration, Telegram chat
 registration, activation, validation, and scheduler setup. Every chat starts in `all` mode and can
-change its own setting later through the bot's `/settings` menu.
+change its own setting later through the bot's `/settings` menu. Telegram commands/buttons become
+active after the installer reports successful scheduler activation.
 
 ## Download verification
 
 SHA-256:
 
 ```text
-1d945a4623fc6ae548fe5ae6acc5bf82162b3b2ead427cc2b143ab511fd8c546
+04df08ccbfbffbcbbe72bc835296f64000808c546dddc337769c647be3559eea
 ```
 
 An activation supplied by the authorized distributor is required.
