@@ -1,32 +1,140 @@
 # DHRU Fast Easy Cron
 
-DHRU Fast Easy Cron is a one-file installer for running DHRU Fusion API cron operations quickly,
-reliably, and without overlapping duplicate jobs.
+DHRU Fast Easy Cron is a secure one-file installer for running DHRU Fusion API cron operations on
+a VPS. It replaces large collections of repeated cron URLs with one managed local system that
+runs only the work DHRU currently needs.
 
-Main features:
+## Main features
 
-- Sends new API orders and retrieves supplier replies every five seconds.
-- Automatically works with gateways that currently have active orders.
-- Distributes price updates across six time buckets to reduce load spikes.
-- Prevents overlapping executions with process locks.
-- Supports common Linux hosting layouts and root or website-user SSH access.
-- Detects old DHRU cron jobs, offers private automatic backup/migration, and generates a rollback
-  command while preserving unrelated cron jobs.
-- Safely detects interrupted/managed installations, offers a private atomic replacement backup,
-  and never overwrites an unknown directory.
-- Includes an optional Telegram bot menu for choosing detailed errors, errors plus recovery/digest,
-  or disabled notifications independently in each chat, plus live cron status and confirmed
-  global Disable/Enable controls.
-- Uses server-specific offline activation.
+### Fast, load-aware processing
 
-## Installation
+- Sends new API orders and retrieves supplier replies every **5 seconds**.
+- Automatically works with **any active API that currently has active orders**.
+- Does not require a separate send/get cron job for every API.
+- Skips APIs without active orders, reducing unnecessary requests, overlap, and server load.
+- Reads the current DHRU cron password automatically from the database on every run. If the
+  password changes in DHRU, no cron URL or runner configuration needs to be edited.
+- Spreads update-price work across six buckets at minutes `0,10,20,30,40,50`, so every active
+  gateway is scheduled once per hour without one large price-update spike.
+- Uses action-specific process locks to prevent overlapping duplicate executions.
 
-Download `install-dhru-fast-easy-cron.run`, then run:
+### Portable installation
+
+- Delivered as one executable `.run` file.
+- Recursively discovers DHRU `configs/config.php` files and lets you select the correct installation
+  when multiple copies exist.
+- Supports common CyberPanel, cPanel, Plesk, and custom `/home` or `/var/www` layouts.
+- Places its files outside the public webroot, beside `public_html` or `httpdocs` when possible.
+- Supports root SSH, passwordless sudo, and website-user SSH installations according to the
+  permissions available on the server.
+- Detects Python 3, required Python modules, MySQL client tools, package manager, systemd, user
+  systemd, lingering, and crontab automatically.
+- Installs missing runtime dependencies when root or passwordless sudo is available, with support
+  for `apt-get`, `dnf`, `yum`, `zypper`, `pacman`, and `apk` package managers.
+- Uses systemd timers when available and a locked user-cron watchdog when necessary.
+
+### Safe migration and upgrades
+
+- Detects active legacy DHRU URL cron jobs and older runner jobs before installation.
+- Offers automatic private backup and migration while preserving unrelated cron jobs.
+- Prints a rollback command that restores the original crontab setup.
+- Detects an existing or interrupted managed installation and requires approval before replacement.
+- Creates a private timestamped backup and restores it automatically if replacement fails.
+- Never overwrites an unknown installation directory.
+- Runs configuration, database, encrypted-payload, dry-run, scheduler, and health checks before
+  reporting installation success.
+
+### Telegram monitoring and control
+
+- Supports multiple private chats or groups.
+- Each chat can independently select **All**, **Errors only**, or **Off** notifications.
+- Detailed errors include the site, action, Fusion API name, gateway key, sanitized endpoint,
+  duration, and response detail when available.
+- Sends recovery notices and a 30-minute activity digest in All mode.
+- Suppresses repeated identical errors to prevent a message every five seconds during an outage.
+- Provides live **Cron Status** plus confirmed **Disable Cron** and **Enable Cron** controls.
+- A paused system stops send, get, update-price, database, and DHRU API work while keeping only the
+  lightweight Telegram control heartbeat alive so it can be enabled again.
+- Only the configured private-chat owner or an administrator of a configured group can change
+  settings. Pause and resume actions are recorded locally.
+
+### Security and licensing
+
+- Runs locally on your VPS; no free or paid external cron service is required.
+- The runner payload is encrypted and is decrypted only after validating a signed activation.
+- Activation is bound to the requested server identity and website installation.
+- Supports publisher-issued lifetime or time-limited licenses.
+- Stores configuration, state, backups, and rollback material with restrictive permissions.
+- Redacts cron passwords and Telegram tokens from operational messages and logs.
+- The public installer contains no signing private key, content key, activation generator, or
+  plaintext runner source.
+
+## Requirements
+
+- A VPS or dedicated Linux server with SSH access.
+- A DHRU Fusion website and readable `configs/config.php`.
+- Root, passwordless sudo, or sufficient website-user permissions for one supported scheduler.
+- Outbound HTTPS access when Telegram notifications are enabled.
+- An activation supplied by the authorized distributor.
+
+Shared hosting without SSH access is not supported.
+
+## Fixed runtime policy
+
+| Action | Schedule | Workers | Timeout | Retries |
+|---|---:|---:|---:|---:|
+| Send orders | Every 5 seconds | 2 | 10 seconds | 1 |
+| Get replies | Every 5 seconds | 3 | 10 seconds | 1 |
+| Update prices | Six 10-minute buckets | 1 | 60 seconds | 0 |
+
+Send and get automatically target APIs with active orders. Update-price gateways are distributed
+deterministically across the six buckets, giving each active gateway one scheduled update per hour.
+
+## Fresh installation
+
+Run these commands on the customer server:
 
 ```bash
+git config --global http.version HTTP/1.1 && git clone https://github.com/markantony-sys/dhru-fast-easy-cron-public.git
+cd dhru-fast-easy-cron-public
 chmod 700 install-dhru-fast-easy-cron.run
 ./install-dhru-fast-easy-cron.run
 ```
+
+The installer asks for the site name, lets you select the correct DHRU installation when needed,
+optionally configures Telegram, displays the server-specific request key, and waits for the matching
+activation key. Sensitive token and activation input is hidden.
+
+Before enabling Telegram during installation, open the bot from every private recipient account
+and press **Start**. For a group, add the bot and allow it to post messages.
+
+## Update an existing checkout
+
+```bash
+git config --global http.version HTTP/1.1
+cd ~/dhru-fast-easy-cron-public
+git pull --ff-only origin main
+chmod 700 install-dhru-fast-easy-cron.run
+./install-dhru-fast-easy-cron.run
+```
+
+When upgrading an installed system, approve replacement only after the installer identifies it as
+a managed DHRU Fast Easy Cron installation. The installer creates its private replacement backup
+before changing the active installation.
+
+## Telegram commands
+
+| Command | Purpose |
+|---|---|
+| `/settings` | Open notification and cron controls |
+| `/status` | Show notification mode and cron processing status |
+| `/cronstatus` | Show cron processing status |
+| `/help` | Show the control menu |
+
+Cron Disable/Enable applies globally to the installed site. Notification mode applies only to the
+chat that changes it.
+
+## Manual and installer verification
 
 Display the complete customer manual without installing:
 
@@ -34,18 +142,21 @@ Display the complete customer manual without installing:
 ./install-dhru-fast-easy-cron.run --manual
 ```
 
-The installer guides you through site detection, optional legacy-cron migration, Telegram chat
-registration, activation, validation, and scheduler setup. Every chat starts in `all` mode and can
-change its own notification setting later through the bot's `/settings` menu. The same menu can
-show cron status or safely pause/resume processing for the installed site. Telegram
-commands/buttons become active after the installer reports successful scheduler activation.
-
-## Download verification
-
-SHA-256:
+Current installer SHA-256:
 
 ```text
 4a265d1afbf17ba6690a51b6890f7c41183527504089230152de8c3792cd9b97
 ```
 
-An activation supplied by the authorized distributor is required.
+Verify it with:
+
+```bash
+sha256sum install-dhru-fast-easy-cron.run
+```
+
+Stop if the result does not match the trusted checksum above.
+
+## License and support
+
+An activation supplied by the authorized distributor is required. To get DHRU Fast Easy Cron,
+contact [@chizlok on Telegram](https://t.me/chizlok).
