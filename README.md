@@ -21,6 +21,8 @@ runs only the work DHRU currently needs.
 ### Portable installation
 
 - Delivered as one executable `.run` file.
+- Accepts a bare domain or an HTTP/HTTPS website URL and safely normalizes it to the canonical
+  domain used by the runner and license.
 - Recursively discovers DHRU `configs/config.php` files and lets you select the correct installation
   when multiple copies exist.
 - Supports common CyberPanel, cPanel, Plesk, and custom `/home` or `/var/www` layouts.
@@ -149,7 +151,7 @@ Display the complete customer manual without installing:
 Current installer SHA-256:
 
 ```text
-78dc042cbc25d1af633b27dc190d63d92bff299e9053d7397231eccbbf7b7971
+ea427f0131c446e688a02a272a8d991db64b181e37323d6c18c59dcc9672385b
 ```
 
 Verify it with:
