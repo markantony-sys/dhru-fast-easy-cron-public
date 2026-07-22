@@ -149,7 +149,7 @@ Display the complete customer manual without installing:
 Current installer SHA-256:
 
 ```text
-5951817bc544ee9e6612a4668756eddb4791fb57d1319878915a6540749746fd
+b19ac8fbda7ad6184e36f3312281d256bb4b5b1e5f6f7b64a292165470512629
 ```
 
 Verify it with:
